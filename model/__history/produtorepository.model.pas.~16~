@@ -1,0 +1,263 @@
+unit produtorepository.model;
+
+interface
+
+uses uprodutorepositoryintf, produto.model, conexao.model, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
+     Data.DB;
+
+type
+  TProdutoRepository = class(TInterfacedObject, IProdutoRepository)
+  private
+    TblProdutos: TFDQuery;
+    QryProdutos: TFDQuery;
+    QryTemp: TFDQuery;
+    DsProdutos: TDataSource;
+    Transacao: TFDTransaction;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure PreencherGrid(APesquisa, ACampo: string);
+    procedure PreencherComboProduto;
+    procedure CarregarCampos(FProduto: TProduto; iCodigo: Integer);
+    function Inserir(FProduto: TProduto; out sErro: string): Boolean;
+    function Alterar(FProduto: TProduto; iCodigo: Integer; out sErro: string): Boolean;
+    function Excluir(iCodigo: Integer; out sErro : string): Boolean;
+    function GetValorUnitario(ACodigo: Integer): Double;
+    function GetDataSource: TDataSource;
+    procedure CriarTabelas;
+    procedure CriarCamposTabelas;
+
+  end;
+
+implementation
+
+{ TProdutoRepository }
+
+
+constructor TProdutoRepository.Create;
+begin
+  inherited Create;
+  CriarTabelas();
+  CriarCamposTabelas();
+end;
+
+destructor TProdutoRepository.Destroy;
+begin
+
+  inherited Destroy;
+end;
+
+procedure TProdutoRepository.CriarTabelas;
+begin
+  Transacao := TConexao.GetInstance.Connection.CriarTransaction;
+  TblProdutos := TConexao.GetInstance.Connection.CriarQuery;
+  QryProdutos := TConexao.GetInstance.Connection.CriarQuery;
+  QryProdutos.Transaction := Transacao;
+  DsProdutos := TConexao.GetInstance.Connection.CriarDataSource;
+  DsProdutos.DataSet := TblProdutos;
+end;
+
+procedure TProdutoRepository.CriarCamposTabelas;
+var
+  FloatField: TFloatField;
+  StringField: TStringField;
+  DateField: TDateField;
+  IntegerField: TIntegerField;
+begin
+  // Criando o campo COD_PRODUTO
+  IntegerField := TIntegerField.Create(TblProdutos);
+  IntegerField.FieldName := 'COD_PRODUTO';
+  IntegerField.DataSet := TblProdutos;
+  IntegerField.Name := 'TblProdutosCOD_PRODUTO';
+
+  // Criando o campo NOME_PRODUTO
+  StringField := TStringField.Create(TblProdutos);
+  StringField.FieldName := 'DES_DESCRICAO';
+  StringField.Size := 100;
+  StringField.DataSet := TblProdutos;
+  StringField.Name := 'TblProdutosDES_DESCRICAO';
+
+  // Criando o campo VAL_PRECO
+  FloatField := TFloatField.Create(TblProdutos);
+  FloatField.FieldName := 'VAL_PRECO';
+  FloatField.DataSet := TblProdutos;
+  FloatField.Name := 'TblProdutosVAL_PRECO';
+  FloatField.DisplayFormat := '#,###,##0.00';
+end;
+
+procedure TProdutoRepository.PreencherGrid(APesquisa, ACampo: string);
+begin
+  with TblProdutos do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select prd.cod_produto, ');
+    SQL.Add('prd.des_descricao, ');
+    SQL.Add('prd.val_preco ');
+    SQL.Add('from tab_produto prd');
+    SQL.Add('where ' + ACampo + ' like :pNOME');
+    SQL.Add('order by ' + ACampo);
+    ParamByName('PNOME').AsString := APesquisa;
+    Open();
+  end;
+end;
+
+procedure TProdutoRepository.PreencherComboProduto;
+begin
+  with TblProdutos do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select * from tab_produto prd order by prd.des_descricao ');
+    Open();
+  end;
+end;
+
+procedure TProdutoRepository.CarregarCampos(FProduto: TProduto; iCodigo: Integer);
+begin
+  with QryProdutos do
+  begin
+    SQL.Clear;
+    SQL.Add('select prd.cod_produto');
+    SQL.Add(',prd.des_descricao');
+    SQL.Add(',prd.val_preco');
+    SQL.Add('from tab_produto prd');
+    SQL.Add('where cod_produto = :cod_produto');
+    ParamByName('cod_produto').AsInteger := iCodigo;
+    Open;
+
+    FProduto.Cod_Produto := FieldByName('COD_PRODUTO').AsInteger;
+    FProduto.Des_Descricao := FieldByName('DES_DESCRICAO').AsString;
+    FProduto.Val_Preco := FieldByName('VAL_PRECO').AsFloat;
+  end;
+end;
+
+function TProdutoRepository.Inserir(FProduto: TProduto; out sErro: string): Boolean;
+begin
+  with QryProdutos, FProduto do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('insert into tab_produto(');
+    SQL.Add('des_descricao, ');
+    SQL.Add('val_preco) ');
+    SQL.Add('values (:des_descricao, ');
+    SQL.Add(':val_preco)');
+
+    ParamByName('DES_DESCRICAO').AsString := Des_Descricao;
+    ParamByName('VAL_PRECO').AsFloat := Val_Preco;
+
+    // Inicia Transação
+    if not Transacao.Connection.Connected then
+      Transacao.Connection.Open();
+
+    try
+      Prepared := True;
+      Transacao.StartTransaction;
+      ExecSQL;
+      Transacao.Commit;
+      Result := True;
+    except
+      on E: Exception do
+      begin
+        Transacao.Rollback;
+        sErro := 'Ocorreu um erro ao inserir um novo produto!' + sLineBreak + E.Message;
+        Result := False;
+        raise;
+      end;
+    end;
+  end;
+end;
+
+function TProdutoRepository.Alterar(FProduto: TProduto; iCodigo: Integer; out sErro: string): Boolean;
+begin
+  with QryProdutos, FProduto do
+  begin
+    Result := False;
+    Close;
+    SQL.Clear;
+    SQL.Add('update tab_produto set ');
+    SQL.Add('des_descricao = :des_descricao, ');
+    SQL.Add('val_preco = :val_preco');
+    SQL.Add('where cod_produto = :cod_produto');
+
+    ParamByName('DES_DESCRICAO').AsString := Des_Descricao;
+    ParamByName('VAL_PRECO').AsFloat := Val_Preco;
+    ParamByName('COD_PRODUTO').AsInteger := iCodigo;
+
+    // Inicia Transação
+    if not Transacao.Connection.Connected then
+      Transacao.Connection.Open();
+
+    try
+      Prepared := True;
+      Transacao.StartTransaction;
+      ExecSQL;
+      Transacao.Commit;
+      Result := True;
+    except
+      on E: Exception do
+      begin
+        Transacao.Rollback;
+        sErro := 'Ocorreu um erro ao alterar os dados do produto!' + sLineBreak + E.Message;
+        Result := False;
+        raise;
+      end;
+    end;
+  end;
+end;
+
+function TProdutoRepository.Excluir(iCodigo: Integer; out sErro: string): Boolean;
+begin
+  with QryProdutos do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Text := 'delete from tab_produto where cod_produto = :cod_produto';
+    ParamByName('COD_PRODUTO').AsInteger := iCodigo;
+
+    // Inicia Transação
+    if not Transacao.Connection.Connected then
+      Transacao.Connection.Open();
+
+    try
+      Prepared := True;
+      Transacao.StartTransaction;
+      ExecSQL;
+      Transacao.Commit;
+      Result := True;
+    except
+      on E: Exception do
+      begin
+        Transacao.Rollback;
+        sErro := 'Ocorreu um erro ao excluir o produto !' + sLineBreak + E.Message;
+        Result := False;
+        raise;
+      end;
+    end;
+  end;
+end;
+
+function TProdutoRepository.GetValorUnitario(ACodigo: Integer): Double;
+begin
+  Result := 0;
+  with QryTemp do
+  begin
+    SQL.Clear;
+    SQL.Add('select cod_produto, ');
+    SQL.Add('val_preco');
+    SQL.Add('from tab_produto');
+    SQL.Add('where cod_produto = :cod_produto');
+    ParamByName('COD_PRODUTO').AsInteger := ACodigo;
+    Open;
+    Result := FieldByName('val_preco').AsFloat
+  end;
+end;
+
+function TProdutoRepository.GetDataSource: TDataSource;
+begin
+  Result := DsProdutos;
+end;
+
+end.

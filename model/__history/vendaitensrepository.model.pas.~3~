@@ -1,0 +1,85 @@
+unit vendaitensrepository.model;
+
+interface
+
+uses vendaitens.model, conexao.model, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param;
+
+type
+  TVendasItensRepository = class
+  private
+    FCod_Produto: Integer;
+    FVal_TotalVenda: Double;
+    FVal_PrecoUnitario: Double;
+    FCod_Venda: Integer;
+    FDes_Descricao: string;
+    FVal_Quantidade: Integer;
+    procedure SetCod_Produto(const Value: Integer);
+
+  public
+    procedure PreencherGrid(TblVendaItens: TFDQuery; sPesquisa, sCampo: string);
+    procedure CarregarCampos(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; iCodigo: Integer);
+    function Inserir(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; Transacao: TFDTransaction; out sErro: string): Boolean;
+    function Alterar(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; Transacao: TFDTransaction; iCodigo: Integer; out sErro: string): Boolean;
+    function Excluir(QryVendaItens: TFDQuery; Transacao: TFDTransaction; iCodigo: Integer; out sErro : string): Boolean;
+
+    property Cod_Venda: Integer read FCod_Venda write FCod_Venda;
+    property Cod_Produto: Integer read FCod_Produto write SetCod_Produto;
+    property Des_Descricao: string read FDes_Descricao write FDes_Descricao;
+    property Val_Quantidade: Integer read FVal_Quantidade write FVal_Quantidade;
+    property Val_PrecoUnitario: Double read FVal_PrecoUnitario write FVal_PrecoUnitario;
+    property Val_TotalVenda: Double read FVal_TotalVenda write FVal_TotalVenda;
+
+  end;
+
+implementation
+
+{ TVendasItensRepository }
+
+
+procedure TVendasItensRepository.PreencherGrid(TblVendaItens: TFDQuery; sPesquisa, sCampo: string);
+begin
+  with TblVendaItens' do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Clear;
+    SQL.Add('select id_venda, ');
+    SQL.Add('cod_venda, ');
+    SQL.Add('cod_produto,');
+    SQL.Add('des_descricao,');
+    SQL.Add('val_preco_unitario, ');
+    SQL.Add('val_quantidade, ');
+    SQL.Add('val_total_venda');
+    SQL.Add('from tab_venda_item');
+    SQL.Add('where cod_venda = :cod_venda');
+    ParamByName('COD_VENDA').AsInteger := iCodigo;
+    Open;
+  end;
+end;
+
+procedure TVendasItensRepository.CarregarCampos(QryVendaItens: TFDQuery; FProduto: TProduto; iCodigo: Integer);
+begin
+
+end;
+
+function TVendasItensRepository.Inserir(QryVendaItens: TFDQuery; FProduto: TProduto; Transacao: TFDTransaction; out sErro: string): Boolean;
+begin
+
+end;
+
+function TVendasItensRepository.Alterar(QryVendaItens: TFDQuery; FProduto: TProduto; Transacao: TFDTransaction; iCodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+function TVendasItensRepository.Excluir(QryVendaItens: TFDQuery; Transacao: TFDTransaction; iCodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+procedure TVendasItensRepository.SetCod_Produto(const Value: Integer);
+begin
+  FCod_Produto := Value;
+end;
+
+end.

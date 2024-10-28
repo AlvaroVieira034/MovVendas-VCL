@@ -1,0 +1,89 @@
+unit vendarepository.model;
+
+interface
+
+uses venda.model, conexao.model, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param;
+
+type
+  TVendaRepository = class
+  public
+    procedure PreencherGrid(TblVendas: TFDQuery; sPesquisa, sCampo: string);
+    procedure CarregarCampos(QryVendas: TFDQuery; FVenda: TVenda; iCodigo: Integer);
+    function Inserir(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; out sErro: string): Boolean;
+    function Alterar(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; iCodigo: Integer; out sErro: string): Boolean;
+    function Excluir(QryVendas: TFDQuery; Transacao: TFDTransaction; iCodigo: Integer; out sErro : string): Boolean;
+
+  end;
+
+implementation
+
+
+{ TVendaRepository }
+
+procedure TVendaRepository.PreencherGrid(TblVendas: TFDQuery; sPesquisa,  sCampo: string);
+begin
+  with TblVendas do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select vda.cod_venda, ');
+    SQL.Add('vda.dta_venda, ');
+    SQL.Add('vda.cod_cliente, ');
+    SQL.Add('vda.val_venda');
+    SQL.Add('from tab_venda vda');
+    SQL.Add('where ' + scampo + ' like :pNOME');
+    SQL.Add('order by vda.dta_venda desc');
+    ParamByName('PNOME').AsString := sPesquisa;
+    Prepared := True;
+    Open();
+  end;
+end;
+
+procedure TVendaRepository.CarregarCampos(QryVendas: TFDQuery; FVenda: TVenda; iCodigo: Integer);
+begin
+  with QryVendas do
+  begin
+    SQL.Clear;
+    SQL.Add('select vda.cod_venda, ');
+    SQL.Add('vda.dta_venda, ');
+    SQL.Add('vda.cod_cliente, ');
+    SQL.Add('vda.val_venda as val_venda ');
+    SQL.Add('from tab_venda vda');
+    SQL.Add('where vda.cod_venda = :cod_venda');
+    SQL.Add('order by vda.dta_venda desc');
+    ParamByName('COD_VENDA').AsInteger := iCodigo;
+    Open();
+
+    with FVenda, QryVendas do
+    begin
+      Cod_Venda := FieldByName('COD_VENDA').AsInteger;
+      Dta_Venda := FieldByName('DTA_VENDA').AsDateTime;
+      Cod_Cliente := FieldByName('DES_NOMECLIENTE').AsString;
+      Des_Cep := FieldByName('DES_CEP').AsString;
+      Des_Endereco := FieldByName('DES_ENDERECO').AsString;
+      Des_Complemento := FieldByName('DES_COMPLEMENTO').AsString;
+      Des_Bairro := FieldByName('DES_BAIRRO').AsString;
+      Des_Cidade := FieldByName('DES_CIDADE').AsString;
+      Des_Estado := FieldByName('DES_ESTADO').AsString;
+      Val_TotalVenda := FieldByName('VAL_TOT_VENDA').AsFloat;
+    end;
+  end;
+end;
+
+function TVendaRepository.Inserir(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; out sErro: string): Boolean;
+begin
+
+end;
+
+function TVendaRepository.Alterar(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; iCodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+function TVendaRepository.Excluir(QryVendas: TFDQuery; Transacao: TFDTransaction; iCodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+
+end.

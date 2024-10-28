@@ -1,0 +1,61 @@
+unit clienterepository.model;
+
+interface
+
+uses cliente.model, conexao.model, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param;
+
+type
+  TClienteRepository = class
+  public
+    procedure PreencherGrid(TblClientes: TFDQuery; APesquisa, ACampo: string);
+    procedure CarregarCampos(QryClientes: TFDQuery; FCliente: TCliente; ACodigo: Integer);
+    function Inserir(QryClientes: TFDQuery; FCliente: TCliente; Transacao: TFDTransaction; out sErro: string): Boolean;
+    function Alterar(QryClientes: TFDQuery; FCliente: TCliente; Transacao: TFDTransaction; ACodigo: Integer; out sErro: string): Boolean;
+    function Excluir(QryClientes: TFDQuery; Transacao: TFDTransaction; ACodigo: Integer; out sErro : string): Boolean;
+
+  end;
+
+implementation
+
+{ TProdutoRepository }
+
+procedure TClienteRepository.PreencherGrid(TblClientes: TFDQuery; APesquisa, ACampo: string);
+begin
+  with TblCliente do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select cli.cod_cliente, ');
+    SQL.Add('cli.des_nomecliente, ');
+    SQL.Add('cli.des_cidade, ');
+    SQL.Add('cli_des_uf ');
+    SQL.Add('from tab_cliente cli');
+    SQL.Add('where ' + ACampo + ' like :pNOME');
+    SQL.Add('order by ' + ACampo);
+    ParamByName('PNOME').AsString := APesquisa;
+    Open();
+  end;
+end;
+
+procedure TClienteRepository.CarregarCampos(QryClientes: TFDQuery; FCliente: TCliente; ACodigo: Integer);
+begin
+
+end;
+
+function TClienteRepository.Inserir(QryClientes: TFDQuery; FCliente: TCliente; Transacao: TFDTransaction; out sErro: string): Boolean;
+begin
+
+end;
+
+function TClienteRepository.Alterar(QryClientes: TFDQuery; FCliente: TCliente; Transacao: TFDTransaction; ACodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+function TClienteRepository.Excluir(QryClientes: TFDQuery; Transacao: TFDTransaction; ACodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+
+end.

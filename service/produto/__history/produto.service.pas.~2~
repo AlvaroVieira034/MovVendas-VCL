@@ -1,0 +1,26 @@
+unit produto.service;
+
+interface
+
+uses produto.model, conexao.service, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param, Data.DB;
+
+type
+  TProdutoService = class
+  private
+    TblProdutos: TFDQuery;
+    DsProdutos: TDataSource;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure PreencherGrid(APesquisa, ACampo: string);
+    procedure PreencherComboProduto;
+    procedure CarregarCampos(FProduto: TProduto; iCodigo: Integer);
+    function GetValorUnitario(ACodigo: Integer): Double;
+    function GetDataSource: TDataSource;
+
+  end;
+
+implementation
+
+end.

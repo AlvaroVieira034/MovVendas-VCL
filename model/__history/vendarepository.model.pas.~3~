@@ -1,0 +1,49 @@
+unit vendarepository.model;
+
+interface
+
+uses venda.model, conexao.model, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param;
+
+type
+  TVendaRepository = class
+  public
+    procedure PreencherGrid(TblVendas: TFDQuery; sPesquisa, sCampo: string);
+    procedure CarregarCampos(QryVendas: TFDQuery; FVenda: TVenda; iCodigo: Integer);
+    function Inserir(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; out sErro: string): Boolean;
+    function Alterar(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; iCodigo: Integer; out sErro: string): Boolean;
+    function Excluir(QryVendas: TFDQuery; Transacao: TFDTransaction; iCodigo: Integer; out sErro : string): Boolean;
+
+  end;
+
+implementation
+
+
+{ TVendaRepository }
+
+procedure TVendaRepository.PreencherGrid(TblVendas: TFDQuery; sPesquisa,  sCampo: string);
+begin
+
+end;
+
+procedure TVendaRepository.CarregarCampos(QryVendas: TFDQuery; FVenda: TVenda; iCodigo: Integer);
+begin
+
+end;
+
+function TVendaRepository.Inserir(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; out sErro: string): Boolean;
+begin
+
+end;
+
+function TVendaRepository.Alterar(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; iCodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+function TVendaRepository.Excluir(QryVendas: TFDQuery; Transacao: TFDTransaction; iCodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+
+end.

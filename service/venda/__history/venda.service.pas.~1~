@@ -1,0 +1,28 @@
+unit venda.service;
+
+interface
+
+uses ivenda.service, venda.model, conexao.service, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
+     Data.DB;
+
+type
+  TVendaService = class(TInterfacedObject, IVendaService)
+  private
+    TblClientes: TFDQuery;
+    QryClientes: TFDQuery;
+    QryTemp: TFDQuery;
+    DsClientes: TDataSource;
+    Transacao: TFDTransaction;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure PreencherGrid(TblVendas: TFDQuery; APesquisa, ACampo: string);
+    procedure CarregarCampos(QryVendas: TFDQuery; FVenda: TVenda; ACodigo: Integer);
+
+  end;
+
+implementation
+
+end.

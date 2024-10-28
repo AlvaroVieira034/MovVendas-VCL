@@ -1,0 +1,44 @@
+unit vendaitensrepository.model;
+
+interface
+
+uses vendaitens.model, conexao.model, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param;
+
+type
+  TVendasItensRepository = class
+  private
+    FCod_Produto: Integer;
+    FVal_TotalVenda: Double;
+    FVal_PrecoUnitario: Double;
+    FCod_Venda: Integer;
+    FDes_Descricao: string;
+    FVal_Quantidade: Integer;
+    procedure SetCod_Produto(const Value: Integer);
+
+  public
+    procedure Carregar(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; ACodigo: Integer);
+    function Inserir(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; Transacao: TFDTransaction; out sErro: string): Boolean;
+    function Alterar(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; Transacao: TFDTransaction; iCodigo: Integer; out sErro: string): Boolean;
+    function Excluir(QryVendaItens: TFDQuery; Transacao: TFDTransaction; iCodigo: Integer; out sErro : string): Boolean;
+
+
+    property Cod_Venda: Integer read FCod_Venda write FCod_Venda;
+    property Cod_Produto: Integer read FCod_Produto write SetCod_Produto;
+    property Des_Descricao: string read FDes_Descricao write FDes_Descricao;
+    property Val_Quantidade: Integer read FVal_Quantidade write FVal_Quantidade;
+    property Val_PrecoUnitario: Double read FVal_PrecoUnitario write FVal_PrecoUnitario;
+    property Val_TotalVenda: Double read FVal_TotalVenda write FVal_TotalVenda;
+
+  end;
+
+implementation
+
+{ TVendasItensRepository }
+
+
+procedure TVendasItensRepository.SetCod_Produto(const Value: Integer);
+begin
+  FCod_Produto := Value;
+end;
+
+end.

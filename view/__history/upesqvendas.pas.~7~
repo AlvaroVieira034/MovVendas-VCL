@@ -1,0 +1,106 @@
+unit upesqvendas;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  Vcl.StdCtrls, venda.model, venda.controller, FireDAC.Comp.Client, Vcl.Buttons,
+  Vcl.ExtCtrls;
+
+type
+  TFrmPesquisaVendas = class(TForm)
+    GroupBox1: TGroupBox;
+    DbGridPedidos: TDBGrid;
+    PnlPesquisar: TPanel;
+    Label4: TLabel;
+    BtnPesquisar: TSpeedButton;
+    EdtPesquisar: TEdit;
+    CbxFiltro: TComboBox;
+    procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure BtnPesquisarClick(Sender: TObject);
+    procedure DbGridPedidosDblClick(Sender: TObject);
+  private
+    TblVendas: TFDQuery;
+    DsVendas: TDataSource;
+    FVenda: TVenda;
+    VendaController: TVendaController;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure PreencherGrid();
+  end;
+
+var
+  FrmPesquisaVendas: TFrmPesquisaVendas;
+
+implementation
+
+{$R *.dfm}
+
+uses conexao.model, ucadvenda;
+
+procedure TFrmPesquisaVendas.BtnPesquisarClick(Sender: TObject);
+begin
+  PreencherGrid();
+end;
+
+constructor TFrmPesquisaVendas.Create(AOwner: TComponent);
+begin
+  inherited;
+  DsVendas := TDataSource.Create(nil);
+  TblVendas := TFDQuery.Create(nil);
+end;
+
+procedure TFrmPesquisaVendas.DbGridPedidosDblClick(Sender: TObject);
+begin
+  FrmCadVenda.codigoVenda := DsVendas.DataSet.FieldByName('COD_VENDA').AsInteger;
+  FrmCadVenda.pesqVenda := True;
+  Close;
+end;
+
+destructor TFrmPesquisaVendas.Destroy;
+begin
+  DsVendas.Free;
+  TblVendas.Free;
+  inherited;
+end;
+
+procedure TFrmPesquisaVendas.FormCreate(Sender: TObject);
+var sCampo: string;
+begin
+  inherited;
+  if TConexao.GetInstance.Connection.TestarConexao then
+  begin
+    TblVendas := TConexao.GetInstance.Connection.CriarQuery;
+    DsVendas := TConexao.GetInstance.Connection.CriarDataSource;
+    DsVendas.DataSet := TblVendas;
+    DbGridPedidos.DataSource := DsVendas;
+    sCampo := 'vda.dta_venda';
+    FVenda := TVenda.Create;
+    VendaController := TVendaController.Create;
+  end
+  else
+  begin
+    ShowMessage('Não foi possível conectar ao banco de dados!');
+    Close;
+  end;
+
+end;
+
+procedure TFrmPesquisaVendas.FormShow(Sender: TObject);
+begin
+  DbGridPedidos.Columns[0].Width := 83;
+  DbGridPedidos.Columns[1].Width := 85;
+  DbGridPedidos.Columns[2].Width := 350;
+  DbGridPedidos.Columns[3].Width := 100;
+  PreencherGrid();
+end;
+
+procedure TFrmPesquisaVendas.PreencherGrid();
+begin
+  VendaController.PreencherGrid(TblVendas, Trim(EdtPesquisar.Text) + '%', CbxFiltro.Text);
+end;
+
+end.

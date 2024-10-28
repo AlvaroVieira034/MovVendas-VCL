@@ -1,0 +1,61 @@
+unit vendaitensrepository.model;
+
+interface
+
+uses vendaitens.model, conexao.model, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param;
+
+type
+  TVendaItensRepository = class
+  private
+
+  public
+    procedure Carregar(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; ACodigo: Integer);
+    function Inserir(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; Transacao: TFDTransaction; ACodigo: Integer; out sErro: string): Boolean;
+    function Alterar(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; Transacao: TFDTransaction; ACodigo: Integer; out sErro: string): Boolean;
+    function Excluir(QryVendaItens: TFDQuery; Transacao: TFDTransaction; ACodigo: Integer; out sErro: string): Boolean;
+
+  end;
+
+implementation
+
+{ TVendasItensRepository }
+
+procedure TVendaItensRepository.Carregar(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; ACodigo: Integer);
+begin
+  with QryVendaItens, FVendaItens do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select vdi.id_venda, ');
+    SQL.Add('vdi.cod_venda, ');
+    SQL.Add('vdi.cod_produto, ');
+    SQL.Add('prd.des_descricao, ');
+    SQL.Add('vdi.val_quantidade,');
+    SQL.Add('vdi.val_precounitario, ');
+    SQL.Add('vdi.val_totalitem');
+    SQL.Add('from tab_venda_item vdi');
+    SQL.Add('join tab_produto prd on vdi.cod_produto = prd.cod_produto');
+    SQL.Add('where vdi.cod_venda = :cod_venda');
+    SQL.Add('order by vdi.id_venda');
+    ParamByName('COD_VENDA').AsInteger := ACodigo;
+    Open;
+  end;
+end;
+
+function TVendaItensRepository.Inserir(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; Transacao: TFDTransaction; ACodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+function TVendaItensRepository.Alterar(QryVendaItens: TFDQuery; FVendaItens: TVendaItens; Transacao: TFDTransaction; ACodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+function TVendaItensRepository.Excluir(QryVendaItens: TFDQuery; Transacao: TFDTransaction; ACodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+
+end.

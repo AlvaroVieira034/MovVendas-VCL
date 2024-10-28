@@ -1,0 +1,96 @@
+unit clienterepository.model;
+
+interface
+
+uses uclienterepositoryintf, cliente.model, conexao.model, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param;
+
+type
+  TClienteRepository = class(TInterfacedObject, IClienteRepository)
+  private
+    FTblClientes, FQryClientes, FQryTemp: TFDQuery;
+    FTransaction: TFDTransaction;
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure PreencherGrid(APesquisa, ACampo: string);
+    procedure PreencherComboCliente;
+    procedure CarregarCampos(FCliente: TCliente; ACodigo: Integer);
+    function Inserir(FCliente: TCliente; out sErro: string): Boolean;
+    function Alterar(FCliente: TCliente; ACodigo: Integer; out sErro: string): Boolean;
+    function Excluir(ACodigo: Integer; out sErro : string): Boolean;
+
+  end;
+
+implementation
+
+{ TProdutoRepository }
+
+constructor TClienteRepository.Create;
+begin
+  inherited Create;
+  FTblClientes := TFDQuery.Create(nil);
+  FQryClientes := TFDQuery.Create(nil);
+  FTransaction := TFDTransaction.Create(nil);
+  FQryClientes.Transaction := FTransaction;
+end;
+
+destructor TClienteRepository.Destroy;
+begin
+  FTblClientes.Free;
+  FQryClientes.Free;
+  FTransaction.Free;
+  inherited Destroy;
+end;
+
+procedure TClienteRepository.PreencherGrid(TblClientes: TFDQuery; APesquisa, ACampo: string);
+begin
+  with FTblClientes do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select cli.cod_cliente,  ');
+    SQL.Add('cli.des_nomecliente, ');
+    SQL.Add('cli.des_cidade, ');
+    SQL.Add('cli.des_uf ');
+    SQL.Add('from tab_cliente cli');
+    SQL.Add('where ' + ACampo + ' like :pNOME');
+    SQL.Add('order by ' + ACampo);
+    ParamByName('PNOME').AsString := APesquisa;
+    Open();
+  end;
+end;
+
+procedure TClienteRepository.PreencherComboCliente;
+begin
+  with FTblClientes do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('select * from tab_cliente order by des_nomecliente ');
+    Open();
+  end;
+end;
+
+procedure TClienteRepository.CarregarCampos(FCliente: TCliente; ACodigo: Integer);
+begin
+
+end;
+
+function TClienteRepository.Inserir(FCliente: TCliente; out sErro: string): Boolean;
+begin
+
+end;
+
+function TClienteRepository.Alterar(FCliente: TCliente; ACodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+function TClienteRepository.Excluir(ACodigo: Integer; out sErro: string): Boolean;
+begin
+
+end;
+
+
+end.

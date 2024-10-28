@@ -1,0 +1,95 @@
+unit venda.controller;
+
+interface
+
+uses umain, venda.model, venda.repository, system.SysUtils, Vcl.Forms, FireDAC.Comp.Client;
+
+type
+  TVendaController = class
+
+  private
+    FVenda: TVenda;
+    FVendaRepository : TVendaRepository;
+
+  public
+    constructor Create();
+    destructor Destroy; override;
+    procedure PreencherGrid(TblVendas: TFDQuery; APesquisa, ACampo: string);
+    function CarregarCampos(FVenda: TVenda; ACodigo: Integer): Boolean;
+    function Inserir(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; var sErro: string): Boolean;
+    function Alterar(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; ACodigo: Integer; sErro: string): Boolean;
+    function Excluir(QryVendas: TFDQuery; Transacao: TFDTransaction; ACodigo: Integer; var sErro: string): Boolean;
+
+  end;
+
+implementation
+
+{ TVendaController }
+
+constructor TVendaController.Create;
+begin
+  FVenda := TVenda.Create();
+  FVendaRepository := TVendaRepository.Create();
+end;
+
+destructor TVendaController.Destroy;
+begin
+  FVenda.Free;
+  FVendaRepository.Free;
+  inherited;
+end;
+
+procedure TVendaController.PreencherGrid(TblVendas: TFDQuery; APesquisa, ACampo: string);
+var LCampo, sErro: string;
+begin
+  try
+    if ACampo = 'Data' then
+      LCampo := 'vda.dta_venda';
+
+    if ACampo = 'Cliente' then
+      LCampo := 'cli.des_nomecliente';
+
+    if ACampo = '' then
+      LCampo := 'vda.dta_venda';
+
+    FVendaRepository.PreencherGrid(TblVendas, APesquisa, LCampo);
+  except on E: Exception do
+    begin
+      sErro := 'Ocorreu um erro ao pesquisar a venda!' + sLineBreak + E.Message;
+      raise;
+    end;
+  end;
+end;
+
+function TVendaController.CarregarCampos(FVenda: TVenda; ACodigo: Integer): Boolean;
+var sErro: string;
+begin
+  try
+    FVendaRepository.CarregarCampos(FVenda, ACodigo);
+    Result := True;
+  except on E: Exception do
+    begin
+      sErro := 'Ocorreu um erro ao carregar a venda!' + sLineBreak + E.Message;
+      Result := False;
+      raise;
+    end;
+  end;
+end;
+
+function TVendaController.Inserir(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; var sErro: string): Boolean;
+begin
+  Result := FVendaRepository.Inserir(QryVendas, FVenda, Transacao, sErro);
+end;
+
+function TVendaController.Alterar(QryVendas: TFDQuery; FVenda: TVenda; Transacao: TFDTransaction; ACodigo: Integer; sErro: string): Boolean;
+begin
+  Result := FVendaRepository.Alterar(QryVendas, FVenda, Transacao, ACodigo, sErro);
+end;
+
+function TVendaController.Excluir(QryVendas: TFDQuery; Transacao: TFDTransaction; ACodigo: Integer; var sErro: string): Boolean;
+begin
+  Result := FVendaRepository.Excluir(QryVendas, Transacao, ACodigo, sErro);
+end;
+
+
+end.
