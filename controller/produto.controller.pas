@@ -2,7 +2,7 @@ unit produto.controller;
 
 interface
 
-uses produto.model, produto.repository, iproduto.repository, produto.service, iproduto.service, system.SysUtils,
+uses produto.model, produto.repository, iinterface.repository, produto.service, iinterface.service, system.SysUtils,
      Vcl.Forms, FireDAC.Comp.Client, Data.DB;
 
 type
@@ -11,12 +11,12 @@ type
 
   private
     FProduto: TProduto;
-    FProdutoRepository: IProdutoRepository;
-    FProdutoService: IProdutoService;
+    FProdutoRepository: TProdutoRepository;
+    FProdutoService: TProdutoService;
     FDataSource: TDataSource;
 
   public
-    constructor Create(AProdutoRepository: IProdutoRepository; AProdutoService: IProdutoService);
+    constructor Create(AProdutoRepository: IInterfaceRepository<TProduto>; AProdutoService: IInterfaceService<TProduto>);
     destructor Destroy; override;
     procedure PreencherGridProdutos(APesquisa, ACampo: string);
     procedure PreencherComboProdutos(TblProdutos: TFDQuery);
@@ -36,11 +36,11 @@ implementation
 { TProdutoController }
 
 
-constructor TProdutoController.Create(AProdutoRepository: IProdutoRepository; AProdutoService: IProdutoService);
+constructor TProdutoController.Create(AProdutoRepository: IInterfaceRepository<TProduto>; AProdutoService: IInterfaceService<TProduto>);
 begin
   FProduto := TProduto.Create();
-  FProdutoRepository := AProdutoRepository;
-  FProdutoService := AProdutoService;
+  FProdutoRepository := TProdutoRepository.Create;
+  FProdutoService := TProdutoService.Create;
 end;
 
 destructor TProdutoController.Destroy;
@@ -61,12 +61,12 @@ begin
   if ACampo = '' then
     LCampo := 'prd.des_descricao';
 
-  FProdutoService.PreencherGridProdutos(APesquisa, LCampo);
+  FProdutoService.PreencherGridForm(APesquisa, LCampo);
 end;
 
 procedure TProdutoController.PreencherComboProdutos(TblProdutos: TFDQuery);
 begin
-  FProdutoService.PreencherComboProdutos(TblProdutos);
+  FProdutoService.PreencherComboBox(TblProdutos);
 end;
 
 function TProdutoController.PreencherCamposForm(FProduto: TProduto; iCodigo: Integer): Boolean;

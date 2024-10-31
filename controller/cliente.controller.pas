@@ -2,7 +2,7 @@ unit cliente.controller;
 
 interface
 
-uses cliente.model, cliente.repository, icliente.repository, cliente.service, icliente.service, conexao.service,
+uses cliente.model, cliente.repository, iinterface.repository, cliente.service, iinterface.service, conexao.service,
      System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param, Data.DB, untFormat, biblioteca;
 
 type
@@ -15,17 +15,16 @@ type
     FClienteService : TClienteService;
 
   public
-    constructor Create(AClienteRepository: IClienteRepository; AClienteService: IClienteService);
+    constructor Create(AClienteRepository: IInterfaceRepository<TCliente>; AClienteService: IInterfaceService<TCliente>);
     destructor Destroy; override;
     procedure PreencherGridClientes(APesquisa, ACampo: string);
     procedure PreencherCamposForm(FCliente: TCliente; ACodigo: Integer);
     procedure PreencherComboClientes(TblComboClientes: TFDQuery);
-    function Inserir(FCliente: TCliente; out sErro: string): Boolean;
-    function Alterar(FCliente: TCliente; ACodigo: Integer; out sErro: string): Boolean;
+    function Inserir(FCliente: TCliente;out sErro: string): Boolean;
+    function Alterar(FCliente: TCliente;ACodigo: Integer; out sErro: string): Boolean;
     function Excluir(ACodigo: Integer; out sErro : string): Boolean;
     function GetDataSource: TDataSource;
     function ValidarDados(const ANomeCliente, ACpfCnpj, ACidade, AUF: string; out AErro: TCampoInvalido): Boolean;
-    function VerificaClienteUtilizado(ACodigo: Integer): Boolean;
     function ExecutarTransacao(AOperacao: TProc; var sErro: string): Boolean;
 
   end;
@@ -34,11 +33,11 @@ implementation
 
 { TClienteController }
 
-constructor TClienteController.Create(AClienteRepository: IClienteRepository; AClienteService: IClienteService);
+constructor TClienteController.Create(AClienteRepository: IInterfaceRepository<TCliente>; AClienteService: IInterfaceService<TCliente>);
 begin
   FCliente := TCliente.Create();
-  FClienteRepository := TClienteRepository.Create();
-  FClienteService := TClienteService.Create();
+  FClienteRepository := TClienteRepository.Create;
+  FClienteService := TClienteService.Create;
 end;
 
 destructor TClienteController.Destroy;
@@ -65,7 +64,7 @@ begin
     if ACampo = '' then
       LCampo := 'cli.des_nomecliente';
 
-    FClienteService.PreencherGridClientes(APesquisa, LCampo);
+    FClienteService.PreencherGridForm(APesquisa, LCampo);
   except on E: Exception do
     begin
       SErro := 'Ocorreu um erro ao pesquisar o cliente!' + sLineBreak + E.Message;
@@ -89,7 +88,7 @@ end;
 
 procedure TClienteController.PreencherComboClientes(TblComboClientes: TFDQuery);
 begin
-  FClienteService.PreencherComboClientes(TblComboClientes);
+  FClienteService.PreencherComboBox(TblComboClientes);
 end;
 
 function TClienteController.Inserir(FCliente: TCliente; out sErro: string): Boolean;
@@ -160,11 +159,6 @@ begin
   end;
 
   Result := True;
-end;
-
-function TClienteController.VerificaClienteUtilizado(ACodigo: Integer): Boolean;
-begin
-  Result := FClienteService.VerificaClienteUtilizado(ACodigo);
 end;
 
 function TClienteController.ExecutarTransacao(AOperacao: TProc; var sErro: string): Boolean;

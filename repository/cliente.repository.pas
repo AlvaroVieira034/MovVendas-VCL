@@ -2,11 +2,11 @@ unit cliente.repository;
 
 interface
 
-uses icliente.repository, cliente.model, conexao.service, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
+uses iinterface.repository, cliente.model, conexao.service, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
      Data.DB;
 
 type
-  TClienteRepository = class(TInterfacedObject, IClienteRepository)
+  TClienteRepository = class(TInterfacedObject, IInterfaceRepository<TCliente>)
   private
     QryClientes: TFDQuery;
     Transacao: TFDTransaction;
@@ -14,8 +14,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function Inserir(FCliente: TCliente; out sErro: string): Boolean;
-    function Alterar(FCliente: TCliente; ACodigo: Integer; out sErro: string): Boolean;
+    function Inserir(AEntity: TCliente; out sErro: string): Boolean;
+    function Alterar(AEntity: TCliente; ACodigo: Integer; out sErro: string): Boolean;
     function Excluir(ACodigo: Integer; out sErro: string): Boolean;
     function ExecutarTransacao(AOperacao: TProc; var sErro: string): Boolean;
 
@@ -39,12 +39,12 @@ begin
   inherited;
 end;
 
-function TClienteRepository.Inserir(FCliente: TCliente; out sErro: string): Boolean;
+function TClienteRepository.Inserir(AEntity: TCliente; out sErro: string): Boolean;
 begin
   Result := ExecutarTransacao(
     procedure
     begin
-      with QryClientes, FCliente do
+      with QryClientes, AEntity do
       begin
         Close;
         SQL.Clear;
@@ -83,12 +83,12 @@ begin
     end, sErro);
 end;
 
-function TClienteRepository.Alterar(FCliente: TCliente; ACodigo: Integer; out sErro: string): Boolean;
+function TClienteRepository.Alterar(AEntity: TCliente; ACodigo: Integer; out sErro: string): Boolean;
 begin
   Result := ExecutarTransacao(
     procedure
     begin
-      with QryClientes, FCliente do
+      with QryClientes, AEntity do
       begin
         Close;
         SQL.Clear;

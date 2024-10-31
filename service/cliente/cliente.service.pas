@@ -2,11 +2,11 @@ unit cliente.service;
 
 interface
 
-uses icliente.service, cliente.model, conexao.service, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
+uses iinterface.service, cliente.model, conexao.service, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
      Data.DB;
 
 type
-  TClienteService = class(TInterfacedObject, IClienteService)
+  TClienteService = class(TInterfacedObject, IInterfaceService<TCliente>)
   private
     TblClientes: TFDQuery;
     TblComboClientes: TFDQuery;
@@ -16,12 +16,11 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure PreencherGridClientes(APesquisa, ACampo: string);
-    procedure PreencherComboClientes(TblClientes: TFDQuery);
+    procedure PreencherGridForm(APesquisa, ACampo: string);
+    procedure PreencherComboBox(TblClientes: TFDQuery);
     procedure PreencherCamposForm(FCliente: TCliente; ACodigo: Integer);
     procedure CriarTabelas;
     function GetDataSource: TDataSource;
-    function VerificaClienteUtilizado(ACodigo: Integer): Boolean;
 
   end;
 
@@ -56,7 +55,7 @@ begin
   Result := DsClientes;
 end;
 
-procedure TClienteService.PreencherGridClientes(APesquisa, ACampo: string);
+procedure TClienteService.PreencherGridForm(APesquisa, ACampo: string);
 begin
   with TblClientes do
   begin
@@ -80,7 +79,7 @@ begin
   end;
 end;
 
-procedure TClienteService.PreencherComboClientes(TblClientes: TFDQuery);
+procedure TClienteService.PreencherComboBox(TblClientes: TFDQuery);
 begin
   with TblClientes do
   begin
@@ -121,20 +120,6 @@ begin
     FCliente.Des_Bairro := FieldByName('DES_BAIRRO').AsString;
     FCliente.Des_Cidade := FieldByName('DES_CIDADE').AsString;
     FCliente.Des_UF := FieldByName('DES_UF').AsString;
-  end;
-end;
-
-function TClienteService.VerificaClienteUtilizado(ACodigo: Integer): Boolean;
-begin
-  with QryTemp do
-  begin
-    SQL.Clear;
-    SQL.Add('select cod_cliente ');
-    SQL.Add('from tab_venda');
-    SQL.Add('where cod_cliente = :cod_cliente');
-    ParamByName('COD_CLIENTE').AsInteger := ACodigo;
-    Open;
-    Result := not QryTemp.Eof;
   end;
 end;
 

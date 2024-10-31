@@ -2,11 +2,11 @@ unit produto.service;
 
 interface
 
-uses iproduto.service, conexao.service, produto.model, FireDAC.Comp.Client, FireDAC.Stan.Param, System.SysUtils,
+uses iinterface.service, conexao.service, produto.model, FireDAC.Comp.Client, FireDAC.Stan.Param, System.SysUtils,
      Data.DB;
 
 type
-  TProdutoService = class(TInterfacedObject, IProdutoService)
+  TProdutoService = class(TInterfacedObject, IInterfaceService<TProduto>)
   private
     TblProdutos: TFDQuery;
     QryTemp: TFDQuery;
@@ -15,8 +15,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure PreencherGridProdutos(APesquisa, ACampo: string);
-    procedure PreencherComboProdutos(TblProdutos: TFDQuery);
+    procedure PreencherGridForm(APesquisa, ACampo: string);
+    procedure PreencherComboBox(TblProdutos: TFDQuery);
     procedure PreencherCamposForm(FProduto: TProduto; iCodigo: Integer);
     function GetValorUnitario(ACodigo: Integer): Double;
     function GetDataSource: TDataSource;
@@ -80,7 +80,7 @@ begin
 
 end;
 
-procedure TProdutoService.PreencherGridProdutos(APesquisa, ACampo: string);
+procedure TProdutoService.PreencherGridForm(APesquisa, ACampo: string);
 begin
   with TblProdutos do
   begin
@@ -97,7 +97,7 @@ begin
   end;
 end;
 
-procedure TProdutoService.PreencherComboProdutos(TblProdutos: TFDQuery);
+procedure TProdutoService.PreencherComboBox(TblProdutos: TFDQuery);
 begin
   with TblProdutos do
   begin

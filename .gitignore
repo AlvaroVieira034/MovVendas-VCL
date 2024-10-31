@@ -3,6 +3,7 @@
 
 
 # Ignorar arquivos de configuração de sistema
+.env
 TesteTecnicoWK.exe
 
 

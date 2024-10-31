@@ -3,7 +3,7 @@ unit venda.repository;
 interface
 
 uses venda.model, ivenda.repository, conexao.service, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
-  Data.DB;
+     Data.DB;
 
 type
   TVendaRepository = class(TInterfacedObject, IVendaRepository)
@@ -103,6 +103,7 @@ begin
 
     try
       ExecSQL;
+      Result := True;
     except
       on E: Exception do
       begin
@@ -124,6 +125,7 @@ begin
 
     try
       ExecSQL;
+      Result := True;
     except
       on E: Exception do
       begin
@@ -164,3 +166,4 @@ begin
 end;
 
 end.
+

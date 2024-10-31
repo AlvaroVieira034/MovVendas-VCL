@@ -2,11 +2,11 @@ unit produto.repository;
 
 interface
 
-uses iproduto.repository, produto.model, conexao.service, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
+uses iinterface.repository, produto.model, conexao.service, System.SysUtils, FireDAC.Comp.Client, FireDAC.Stan.Param,
      Data.DB;
 
 type
-  TProdutoRepository = class(TInterfacedObject, IProdutoRepository)
+  TProdutoRepository = class(TInterfacedObject, IInterfaceRepository<TProduto>)
   private
     QryProdutos: TFDQuery;
     Transacao: TFDTransaction;
@@ -14,8 +14,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function Inserir(FProduto: TProduto; out sErro: string): Boolean;
-    function Alterar(FProduto: TProduto; iCodigo: Integer; out sErro: string): Boolean;
+    function Inserir(AEntity: TProduto; out sErro: string): Boolean;
+    function Alterar(AEntity: TProduto; iCodigo: Integer; out sErro: string): Boolean;
     function Excluir(iCodigo: Integer; out sErro : string): Boolean;
     function ExecutarTransacao(AOperacao: TProc; var sErro: string): Boolean;
 
@@ -40,12 +40,12 @@ begin
   inherited Destroy;
 end;
 
-function TProdutoRepository.Inserir(FProduto: TProduto; out sErro: string): Boolean;
+function TProdutoRepository.Inserir(AEntity: TProduto; out sErro: string): Boolean;
 begin
   Result := ExecutarTransacao(
     procedure
     begin
-      with QryProdutos, FProduto do
+      with QryProdutos, AEntity do
       begin
         Close;
         SQL.Clear;
@@ -63,12 +63,12 @@ begin
     end, sErro);
 end;
 
-function TProdutoRepository.Alterar(FProduto: TProduto; iCodigo: Integer; out sErro: string): Boolean;
+function TProdutoRepository.Alterar(AEntity: TProduto; iCodigo: Integer; out sErro: string): Boolean;
 begin
   Result := ExecutarTransacao(
   procedure
   begin
-    with QryProdutos, FProduto do
+    with QryProdutos, AEntity do
     begin
       Close;
       SQL.Clear;

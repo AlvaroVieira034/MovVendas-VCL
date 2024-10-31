@@ -12,8 +12,6 @@ uses
   venda.controller in 'controller\venda.controller.pas',
   vendaitens.controller in 'controller\vendaitens.controller.pas',
   untFormat in 'util\lib\untFormat.pas',
-  icliente.repository in 'interface\icliente.repository.pas',
-  iproduto.repository in 'interface\iproduto.repository.pas',
   conexao.service in 'service\conexao\conexao.service.pas',
   connection.service in 'service\conexao\connection.service.pas',
   cep.service in 'service\cep\cep.service.pas',
@@ -26,15 +24,15 @@ uses
   venda.repository in 'repository\venda.repository.pas',
   vendaitens.repository in 'repository\vendaitens.repository.pas',
   produto.service in 'service\produto\produto.service.pas',
-  iproduto.service in 'interface\iproduto.service.pas',
-  icliente.service in 'interface\icliente.service.pas',
   cliente.service in 'service\cliente\cliente.service.pas',
   ivenda.service in 'interface\ivenda.service.pas',
   ivenda.repository in 'interface\ivenda.repository.pas',
   venda.service in 'service\venda\venda.service.pas',
   ucadcliente in 'view\ucadcliente.pas' {FrmCadCliente},
   biblioteca in 'util\lib\biblioteca.pas',
-  ivendaitens.repository in 'interface\ivendaitens.repository.pas';
+  ivendaitens.repository in 'interface\ivendaitens.repository.pas',
+  iinterface.repository in 'interface\iinterface.repository.pas',
+  iinterface.service in 'interface\iinterface.service.pas';
 
 {$R *.res}
 

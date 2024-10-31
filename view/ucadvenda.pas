@@ -12,7 +12,7 @@ uses
   Vcl.DBCtrls, Vcl.Controls, conexao.service, produto.model, produto.controller, produto.repository, produto.service,
   cliente.model, cliente.controller, venda.model, vendaitens.model, venda.controller, venda.repository,
   ivenda.repository, venda.service, ivenda.service, vendaitens.controller, cliente.repository,
-  icliente.repository, cliente.service, icliente.service, untFormat, upesqvendas, System.Generics.Collections;
+  iinterface.repository, cliente.service, iinterface.service, untFormat, upesqvendas, System.Generics.Collections;
 
 {$ENDREGION}
 
