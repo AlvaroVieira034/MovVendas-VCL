@@ -50,6 +50,7 @@ type
     procedure DBGridProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure DBGridProdutosCellClick(Column: TColumn);
+    procedure EdtPesquisarChange(Sender: TObject);
 
   private
     ValoresOriginais: array of string;
@@ -146,6 +147,12 @@ begin
   ValoresOriginais[1] := EdtDescricao.Text;
   ValoresOriginais[2] := EdtPrecoUnitario.Text;
   BtnPesquisar.Click;
+end;
+
+procedure TFrmCadProduto.EdtPesquisarChange(Sender: TObject);
+begin
+  inherited;
+  PreencherGridProdutos();
 end;
 
 procedure TFrmCadProduto.EdtPrecoUnitarioExit(Sender: TObject);

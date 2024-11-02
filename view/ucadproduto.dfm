@@ -267,6 +267,7 @@ inherited FrmCadProduto: TFrmCadProduto
           Anchors = [akLeft, akTop, akRight]
           CharCase = ecUpperCase
           TabOrder = 1
+          OnChange = EdtPesquisarChange
         end
         object CbxFiltro: TComboBox
           Left = 55
