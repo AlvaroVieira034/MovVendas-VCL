@@ -9,7 +9,6 @@ type
   TClienteService = class(TInterfacedObject, IInterfaceService<TCliente>)
   private
     TblClientes: TFDQuery;
-    TblComboClientes: TFDQuery;
     QryTemp: TFDQuery;
     DsClientes: TDataSource;
 
