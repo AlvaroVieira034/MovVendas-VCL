@@ -59,7 +59,7 @@ begin
       FConexao.Params.Database := Ini.ReadString('Database', 'Database', 'TESTEWK');
       FConexao.Params.UserName := Ini.ReadString('Database', 'UserName', 'sa');
       FConexao.Params.Password := Ini.ReadString('Database', 'Password', 'info');
-      FConexao.Params.Add('Server=' + Ini.ReadString('Database', 'Server', 'NOTEBOOKALVARO\SQLEXPRESS'));
+      FConexao.Params.Add('Server=' + Ini.ReadString('Database', 'Server', 'PC-ALVARO\SQLEXPRESS'));
       FConexao.Params.Add('Port=' + Ini.ReadString('Database', 'Port', '1433'));
       FConexao.LoginPrompt := False;
     end
